@@ -16,21 +16,20 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build Docker Image') {
             steps {
-                sh 'python3 -m pip install -r requirements.txt'
+                sh 'docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .'
+                sh 'docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'pytest'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t ${IMAGE_NAME}:latest .'
+                sh '''
+                    docker run --rm \
+                        ${IMAGE_NAME}:${BUILD_NUMBER} \
+                        pytest
+                '''
             }
         }
 
@@ -43,9 +42,19 @@ pipeline {
                     docker run -d \
                         --name ${CONTAINER_NAME} \
                         -p 8000:8000 \
-                        ${IMAGE_NAME}:latest
+                        ${IMAGE_NAME}:${BUILD_NUMBER}
                 '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'CI/CD deployment successful!'
+        }
+
+        failure {
+            echo 'CI/CD pipeline failed!'
         }
     }
 }
