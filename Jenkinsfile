@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HOST = 'unix:///home/lenovo/.docker/desktop/docker.sock'
+        DOCKER_HOST = 'unix:///var/run/docker.sock'
         IMAGE_NAME = 'task_management_app'
         CONTAINER_NAME = 'task_app'
     }
