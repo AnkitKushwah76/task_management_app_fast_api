@@ -33,18 +33,18 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                sh '''
-                    docker stop ${CONTAINER_NAME} || true
-                    docker rm ${CONTAINER_NAME} || true
+    stage('Deploy') {
+        steps {
+            sh '''
+                docker stop ${CONTAINER_NAME} || true
+                docker rm ${CONTAINER_NAME} || true
 
-                    docker run -d \
-                        --name ${CONTAINER_NAME} \
-                        -p 8000:8000 \
-                        ${IMAGE_NAME}:${BUILD_NUMBER}
-                '''
-            }
+                docker run -d \
+                  --name ${CONTAINER_NAME} \
+                  --env-file .env \
+                  -p 8000:8000 \
+                  ${IMAGE_NAME}:${BUILD_NUMBER}
+            '''
         }
     }
 
