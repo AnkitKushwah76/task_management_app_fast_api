@@ -40,16 +40,16 @@ def register(body:UserSchema, db:Session):
     db.refresh(new_user)
     return new_user
 
-# def login_user(body:LoginSchema, db:Session):
-#     user = db.query(UserModel).filter(UserModel.user_name == body.user_name).first()
-#     if not user:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Wrong UserName !!")
-#     if not verify_password(body.password, user.has_password):
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Wrong Password !!")
+def login_user(body:LoginSchema, db:Session):
+    user = db.query(UserModel).filter(UserModel.user_name == body.user_name).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Wrong UserName !!")
+    if not verify_password(body.password, user.has_password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Wrong Password !!")
 
-#     exp_time = datetime.now() + timedelta(minutes=settings.EXP_TIME)
-#     token = jwt.encode({"_id":user.id, "exp":exp_time}, settings.SECRET_KEY, settings.ALGORITHM)
-#     return{"token": token}
+    exp_time = datetime.now() + timedelta(minutes=settings.EXP_TIME)
+    token = jwt.encode({"_id":user.id, "exp":exp_time}, settings.SECRET_KEY, settings.ALGORITHM)
+    return{"token": token}
 
 def is_authenticated(request: Request, db:Session):
     try:
